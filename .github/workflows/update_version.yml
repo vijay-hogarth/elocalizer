@@ -1,0 +1,20 @@
+name: Update Version JSON
+on:
+  release:
+    types: [published]
+
+jobs:
+  update-json:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update version.json
+        run: |
+          echo '{"version": "${{ github.event.release.tag_name }}", "downloadUrl": "${{ github.event.release.assets[0].browser_download_url }}"}' > version.json
+      - name: Commit and Push
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add version.json
+          git commit -m "Update version to ${{ github.event.release.tag_name }}"
+          git push
